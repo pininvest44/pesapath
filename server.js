@@ -47,10 +47,25 @@ app.post('/api/bulk-stk', async (req, res) => {
                 body: JSON.stringify(payload)
             });
 
+            // Even if the request didn't throw an error, checking if HTTP status is 2xx
+            if (!response.ok) {
+                const textError = await response.text();
+                console.error(`[HTTP ERROR] ${msisdn} Status: ${response.status} - ${textError}`);
+                continue; // Skip to the next number
+            }
+
             const data = await response.json();
             console.log(`[SUCCESS] ${msisdn}:`, JSON.stringify(data));
+
         } catch (error) {
-            console.error(`[FAILURE] ${msisdn} Error:`, error.message);
+            // Unmasking the generic "fetch failed" error string
+            console.error(`[FAILURE] Network/Fetch Error for ${msisdn}:`, error.message);
+            
+            if (error.cause) {
+                console.error(` -> Deep Underlaying Cause:`, error.cause);
+            } else {
+                console.error(` -> Technical Details: No explicit cause provided. Check network interface/DNS.`);
+            }
         }
 
         // 30 requests per minute = 1 request every 2000 milliseconds
