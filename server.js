@@ -41,7 +41,7 @@ app.post('/api/bulk-stk', async (req, res) => {
         console.log(`[Queue ${i + 1}/${numbers.length}] Initiating STK Push to ${msisdn}...`);
 
         try {
-            const response = await fetch('https://api.finaswift.com/v1/stkpush', {
+            const response = await fetch('https://api.pesawise.xyz/api/payments/stk-push', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
